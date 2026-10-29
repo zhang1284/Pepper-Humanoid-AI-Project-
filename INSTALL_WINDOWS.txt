@@ -1,0 +1,55 @@
+Pepper + Gemini voice notebook  -  install on Windows with Anaconda
+===================================================================
+
+Open "Anaconda Prompt" (Start menu > Anaconda3 > Anaconda Prompt) and run these commands one by one.
+Replace the path on the first line with the folder where you unzipped pepper_voice_bridge.zip.
+
+1. Go to the unzipped folder
+--------------------------------
+cd %USERPROFILE%\Desktop\pepper_voice_bridge
+
+2. Environment for the notebook (Python 3.11, JupyterLab, the lesson packages)
+------------------------------------------------------------------------------
+conda create -y -n pepper python=3.11
+conda activate pepper
+pip install "jupyterlab>=4.2" ipywidgets==8.0.7 ipynao==0.8.9 naowidgets==0.1.1
+
+3. Environment for the bridge (Python 3.6 + qi, NAOqi's own library; the wheel is in bridge\wheels)
+-----------------------------------------------------------------------------------------------------
+bridge\setup.bat
+
+   (This runs:  conda create -y -p bridge\.venv python=3.6
+                bridge\.venv\python.exe -m pip install --no-index --find-links bridge\wheels qi==2.0.1 )
+   The notebook's first cell runs the same script by itself if bridge\.venv is missing.
+
+4. Only if Pepper's password is not the factory default "nao"
+-------------------------------------------------------------
+copy bridge\.env.example bridge\.env
+notepad bridge\.env          (put the password after PEPPER_PASSWORD= and save)
+
+5. Start the notebook (every time)
+----------------------------------
+conda activate pepper
+jupyter lab pepper_gemini_voice2.ipynb
+
+6. In the notebook
+------------------
+- First cell: set PEPPER_IP to the address Pepper says when you press its chest button, run it.
+  Expected: "Bridge started on this computer" and "Pepper '<name>' is connected through the bridge".
+- The widget says "Failed to 127.0.0.1" the first time: open https://127.0.0.1:8443/check in a new tab,
+  click Advanced, then Proceed, and run the first cell again. It then says "Connected to 127.0.0.1".
+- Step 1b cell: must print CONNECTED. Otherwise it names the cause and the fix.
+- Step 2 cell: paste the Gemini API key, press Wake up Pepper, then Start listening.
+  Say "What is this object?" while holding it in front of Pepper's face, "Pepper, go forward five steps",
+  "Lift right hand", "Lift left hand", "Put your hands down". Stop moving stops the wheels at once.
+  Pepper only rolls with its charging flap closed (back of the base) and about 1.5 m of clear floor ahead.
+
+Optional tests without a robot (from the Anaconda Prompt, "pepper" environment active; verified on a Mac, not yet on Windows):
+python tests\test_skills.py
+python tests\test_connection.py
+
+Notes
+-----
+- Use Chrome or Edge for the notebook (microphone and robot widget).
+- The bridge logs to bridge\bridge.log.  To stop it:  curl http://127.0.0.1:8443/stop
+- Windows Firewall may ask whether python.exe may accept connections: allow it (private networks is enough).
