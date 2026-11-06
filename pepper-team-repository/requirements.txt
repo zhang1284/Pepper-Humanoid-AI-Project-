@@ -1,0 +1,5 @@
+# Python environment for running the notebook itself (any Python 3.10+; the bridge has its own 3.12 venv).
+jupyterlab>=4.2
+ipywidgets==8.0.7
+ipynao==0.8.9
+naowidgets==0.1.1
